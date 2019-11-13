@@ -1,32 +1,27 @@
-int threshold = 40;
-bool touch1detected = false;
-bool touch2detected = false;
+#define TOUTCH_PIN T0 // ESP32 Pin D4
+#define LED_PIN LED_BUILTIN
+int touch_value = 100;
 
-void gotTouch1(){
- touch1detected = true;
-}
-
-void gotTouch2(){
- touch2detected = true;
-}
-
-void setup() {
+void setup()
+{
   Serial.begin(115200);
   delay(1000); // give me time to bring up serial monitor
-  Serial.println("ESP32 Touch Interrupt Test");
-  // PINO 32
-  touchAttachInterrupt(T2, gotTouch1, threshold);
-  // PINO 31
-  touchAttachInterrupt(T3, gotTouch2, threshold);
+  Serial.println("ESP32 Touch Test");
+  pinMode(LED_PIN, OUTPUT);
+  digitalWrite (LED_PIN, LOW);
 }
 
-void loop(){
-  if(touch1detected){
-    touch1detected = false;
-    Serial.println("Touch 1 detected");
+void loop()
+{
+  touch_value = touchRead(TOUTCH_PIN);
+  Serial.println(touch_value);  // get value using T0/D1
+  if (touch_value < 50)
+  {
+    digitalWrite (LED_PIN, HIGH);
   }
-  if(touch2detected){
-    touch2detected = false;
-    Serial.println("Touch 2 detected");
+  else
+  {
+    digitalWrite (LED_PIN, LOW);
   }
+  delay(100);
 }

@@ -1,4 +1,4 @@
-#include <BLEDevice.h>
+  #include <BLEDevice.h>
 #include <BLEServer.h>
 #include <BLEUtils.h>
 #include <BLE2902.h>
@@ -103,6 +103,10 @@ class MyCallbacks: public BLECharacteristicCallbacks {
           isr2();
         }
         else {
+          
+          flagGenerate = 1;
+          generatedTime1 = 0;
+
           try {
             char aux[100];
             float auxFloatVext[3];
@@ -126,7 +130,8 @@ class MyCallbacks: public BLECharacteristicCallbacks {
                 velToGenerate = int(::atof(pch));
                 sprintf(str, "A velocidade gerada foi mudada de %d para %d.", velAux, velToGenerate);
                 enviarSerialBle(str);
-                timeNeededToGenerate = abs(int((dist * 1000000 * 3.6) / (velToGenerate)));
+                
+                
               }
               count++;
               pch = strtok (NULL, ",");
@@ -144,6 +149,7 @@ class MyCallbacks: public BLECharacteristicCallbacks {
               enviarSerialBle(str);
               Serial.println(str);
               dist = distAux;
+              timeNeededToGenerate = abs(int((dist * 1000000 * 3.6) / (velToGenerate)));
 
             } else {
               sprintf(str, "A distancia inserida(%s) deve estar entre 3 e 5 metros.", aux);
@@ -283,28 +289,30 @@ void setup() {
 
 void loop() {
 
-  if (flagVelocidade) {
-    enviarVelocidade();
-  }
+ 
 
   if (velToGenerate > 0) {
     if (flagGenerate) {
+      delay(50);
       generatedTime1 = micros();
       flagGenerate = false;
-      digitalWrite(33, HIGH);//Faz o LED piscar (inverte o estado).
+      digitalWrite(33, HIGH);
       delay(1);
-      digitalWrite(33, LOW);//Faz o LED piscar (inverte o estado).
+      digitalWrite(33, LOW);
 
     } else if (micros() - generatedTime1 >= timeNeededToGenerate) {
 
       digitalWrite(32, HIGH);//Faz o LED piscar (inverte o estado).
-      delay(10);
+      delay(1);
       digitalWrite(32, LOW);//Faz o LED piscar (inverte o estado).
       Serial.println(micros() - generatedTime1);
       flagGenerate = true;
-      delay(50);
 
     }
+  }
+  
+  if (flagVelocidade) {
+    enviarVelocidade();
   }
 
 

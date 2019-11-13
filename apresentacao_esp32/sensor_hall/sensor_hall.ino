@@ -1,16 +1,28 @@
-//Simple sketch to access the internal hall effect detector on the esp32.
-//values can be quite low. 
-//Brian Degger / @sctv  
-
-int val = 0;
+const int LED = LED_BUILTIN; 
+//limite para ativar o LED
+const int LIMIT = 3;
+ 
 void setup() {
-  Serial.begin(9600);
-    }
+  Serial.begin(115200);  
+  //configura o pino do LED como saída
+  pinMode(LED, OUTPUT); 
+}
+void loop() { 
+   //guarda o valor lido do sensor hall
+   int measurement = 0; 
+   //faz a leitura do sensor hall
+   measurement = hallRead();
+   Serial.print("Imprime a medida: ");
+   Serial.println(measurement);
+   //verifica se o valor lido é menor que o limite definido 
+   if(measurement < LIMIT) {
+      //liga o LED
+      digitalWrite(LED, HIGH);
+   }
+   else   {
+      //desliga o LED
+      digitalWrite(LED, LOW);
+   }
+   delay(100);
 
-void loop() {
-  // put your main code here, to run repeatedly:
-  val = hallRead();
-  // print the results to the serial monitor:
-  //Serial.print("sensor = ");
-  Serial.println(val);//to graph 
 }
