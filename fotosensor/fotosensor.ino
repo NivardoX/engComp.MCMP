@@ -4,16 +4,10 @@
 #include <BLE2902.h>
 #include <string.h>
 
-//Bluetooth UART
 
-
-
-// See the following for generating UUIDs:
-// https://www.uuidgenerator.net/
-
-#define SERVICE_UUID           "6E400001-B5A3-F393-E0A9-E50E24DCCA9E" // UART service UUID
-#define CHARACTERISTIC_UUID_RX "6E400002-B5A3-F393-E0A9-E50E24DCCA9E"
-#define CHARACTERISTIC_UUID_TX "6E400003-B5A3-F393-E0A9-E50E24DCCA9E"
+#define SERVICE_UUID           "6e400001-b5a3-f393-e0a9-e50e24dcca9e" // UART service UUID
+#define CHARACTERISTIC_UUID_RX "6e400002-b5a3-f393-e0a9-e50e24dcca9e"
+#define CHARACTERISTIC_UUID_TX "6e400003-b5a3-f393-e0a9-e50e24dcca9e"
 
 
 BLEServer *pServer = NULL;
@@ -93,14 +87,17 @@ class MyCallbacks: public BLECharacteristicCallbacks {
         }
         else if (strcmp(str, "OFF\r\n")  == 0) {
           digitalWrite(LED_BUILTIN, LOW);//Faz o LED piscar (inverte o estado).
-        } else if (strcmp(str, "CMD1\r\n") == 0) {
+        } else if (strcmp(str, "CMD1..") == 0) {
           isr1();
-        } else if (strcmp(str, "CMD2\r\n") == 0) {
+        } else if (strcmp(str, "CMD2..") == 0) {
           isr2();
-        } else if (strcmp(str, "CMD3\r\n") == 0) {
+        } else if (strcmp(str, "CMD3..") == 0) {
           isr1();
           delayMicroseconds(generateTime(random(1,200)));
           isr2();
+        }
+        else if (strcmp(str, "CMD4..") == 0) {
+          velToGenerate = 0;
         }
         else {
           
@@ -128,8 +125,8 @@ class MyCallbacks: public BLECharacteristicCallbacks {
               else {
                 int velAux = velToGenerate;
                 velToGenerate = int(::atof(pch));
-                sprintf(str, "A velocidade gerada foi mudada de %d para %d.", velAux, velToGenerate);
-                enviarSerialBle(str);
+//                sprintf(str, "A velocidade gerada foi mudada de %d para %d.", velAux, velToGenerate);
+//                enviarSerialBle(str);
                 
                 
               }
@@ -140,27 +137,26 @@ class MyCallbacks: public BLECharacteristicCallbacks {
 
             if (int(distAux) == 0) {
               sprintf(str, "A distancia inserida(%s) não é válida.", aux);
-              enviarSerialBle(str);
-              enviarSerialBle(str);
+//              enviarSerialBle(str);
 
 
             } else if (distAux >= 3 && distAux <= 5 ) {
-              sprintf(str, "A distancia foi mudada de %.2f para %.2f.", dist, distAux);
-              enviarSerialBle(str);
-              Serial.println(str);
+//              sprintf(str, "A distancia foi mudada de %.2f para %.2f.", dist, distAux);
+//              enviarSerialBle(str);
+//              Serial.println(str);
               dist = distAux;
               timeNeededToGenerate = abs(int((dist * 1000000 * 3.6) / (velToGenerate)));
 
             } else {
-              sprintf(str, "A distancia inserida(%s) deve estar entre 3 e 5 metros.", aux);
-              enviarSerialBle(str);
+//              sprintf(str, "A distancia inserida(%s) deve estar entre 3 e 5 metros.", aux);
+//              enviarSerialBle(str);
             }
           } catch (...) {
             char aux[100];
             strcpy(aux, rxValue.c_str());
             aux[strlen(aux) - 2] = '\0';
-            sprintf(str, "A distancia inserida(%s) não é válida.", aux);
-            enviarSerialBle(str);
+//            sprintf(str, "A distancia inserida(%s) não é válida.", aux);
+//            enviarSerialBle(str);
           }
         }
 
